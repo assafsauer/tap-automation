@@ -111,7 +111,7 @@ kubectl apply -f git-secret.yaml -n $tap_namespace
 
 
 ### rbac overlay workaround for 1.2 ###
-wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/tap/template/rbac.overlay.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/rbac.overlay.yml
 #envsubst <  rbac.overlay.yml > rbac.overlay.yaml
 kubectl create secret generic k8s-reader-overlay --from-file=rbac.overlay.yml -n tap-install
 
