@@ -25,6 +25,9 @@ contour:
       aws:
         LBType: nlb
 
+excluded_packages:
+- policy.apps.tanzu.vmware.com
+
 cnrs:
   provider: local
   domain_name: apps.$domain
