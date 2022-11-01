@@ -101,17 +101,17 @@ kubectl create ns tap-install
 
 ### create storageclass ###
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/storage-class.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/storage-class.yml
 kubectl apply -f storage-class.yml  
 
 ### git token secret ###
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/git-secret.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/template/git-secret.yml
 envsubst <  git-secret.yml > git-secret.yaml 
 kubectl apply -f git-secret.yaml -n $tap_namespace
 
 
 ### rbac overlay workaround for 1.2 ###
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/rbac.overlay.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/tap/template/rbac.overlay.yml
 #envsubst <  rbac.overlay.yml > rbac.overlay.yaml
 kubectl create secret generic k8s-reader-overlay --from-file=rbac.overlay.yml -n tap-install
 
@@ -160,7 +160,7 @@ kubectl apply -f https://github.com/vmware-tanzu/carvel-secretgen-controller/rel
 
 
 #### RBAC ####
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/serviceacount.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/serviceacount.yml
 kubectl apply -f serviceacount.yml -n $tap_namespace
 
 
@@ -214,8 +214,8 @@ kubectl create secret docker-registry harbor-registry --docker-server=${HARBOR_D
 echo "your harbor cred"
 kubectl get secret registry-credentials --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-values.yaml 
-envsubst < tap-values.yaml > tap-base-final.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tap-values.yml 
+envsubst < tap-values.yml > tap-base-final.yml
 
 tanzu package repository add tanzu-tap-repository \
   --url registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:$tap_version \
@@ -254,8 +254,8 @@ ip=$(nslookup $ingress |grep Address |grep -v 127 | awk '{print $2}')
 echo "########## please update your DNS as follow: ###########"
 echo *app.$domain "pointing to" $ip
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-values-gui.yaml
-envsubst < tap-values-gui.yaml > tap-gui-final-val.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tap-values-gui.yml
+envsubst < tap-values-gui.yml > tap-gui-final-val.yml
 tanzu package installed update --install tap -p tap.tanzu.vmware.com -v $tap_version -n tap-install --poll-timeout 30m -f tap-gui-final-val.yml 
 
 
@@ -265,13 +265,13 @@ if [ "$REPLY" != "yes" ]; then
 fi
 
 #### scan and tests #####
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/scanpolicy.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/scanpolicy.yml
 kubectl apply -f scanpolicy.yml -n $tap_namespace
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tekton.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tekton.yml
 kubectl apply -f tekton.yml -n $tap_namespace
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-test-scan.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tap-test-scan.yml
 envsubst < tap-test-scan.yml > tap-test-scan.yaml
 tanzu package installed update --install tap -p tap.tanzu.vmware.com -v $tap_version -n tap-install --poll-timeout 30m -f tap-test-scan.yaml 
 
