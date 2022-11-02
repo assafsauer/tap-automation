@@ -87,7 +87,7 @@ echo "starting installation"
 
 kubectl config use-context $mgmt_cluster"-admin@"$mgmt_cluster
 
-kubectl patch "app/"$cluster"-kapp-controller" -n kapp-controller -p '{"spec":{"paused":true}}' --type=merge
+kubectl patch app/"$cluster"-kapp-controller -n default --patch '{"spec":{"paused":true}}' --type=merge
 
 kubectl config use-context $cluster"-admin@"$cluster
 
