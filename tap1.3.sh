@@ -105,7 +105,7 @@ wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templ
 kubectl apply -f storage-class.yml  
 
 ### git token secret ###
-wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/template/git-secret.yml
+wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/git-secret.yml
 envsubst <  git-secret.yml > git-secret.yaml 
 kubectl apply -f git-secret.yaml -n $tap_namespace
 
