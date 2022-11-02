@@ -1,7 +1,7 @@
 profile: full
 
 shared:
-  ingress_domain: $tap_domain
+  ingress_domain: $domain
   
 ceip_policy_disclosed: true
 buildservice:
@@ -16,7 +16,7 @@ ootb_supply_chain_basic:
     repository: "tap/supply-chain"
  
  
- contour:
+contour:
   infrastructure_provider: aws
   envoy:
     service:
