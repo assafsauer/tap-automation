@@ -41,8 +41,9 @@ sshkey=xxx
 export infrastructure_provider=aws
 export LBType=nlb
 
-
-################## Download TAP packeges ##################
+ 
+ 
+ ################## Download TAP packeges ##################
 ###########################################################
 
 ### login to pivotal network ###
@@ -135,6 +136,7 @@ mkdir tanzu
 tar -xvf tanzu-framework-linux-amd64.tar -C tanzu/
 cd tanzu
 export TANZU_CLI_NO_INIT=true
+
 #tanzu plugin delete imagepullsecret
 #tanzu config set features.global.context-aware-cli-for-plugins false
 
@@ -150,17 +152,22 @@ cd ..
 kubectl create ns tap-install
 
 kubectl delete deployment kapp-controller -n tkg-system
+
 kubectl apply -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.29.0/release.yml
 
 kubectl create ns secretgen-controller
+
 kubectl apply -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml
 
 #kapp deploy -y -a sg -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.6.0/release.yml
 
 
 
-#### RBAC ####
+################## RBAC ##################
+#############################################
+
 wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/serviceacount.yml
+
 kubectl apply -f serviceacount.yml -n $tap_namespace
 
 
@@ -171,7 +178,7 @@ kubectl apply -f serviceacount.yml -n $tap_namespace
 #### validating access /exist script if login fail #####
 
 
-echo "checking credentials for Tanzu Network and Regsitry"
+echo "#####  checking credentials for Tanzu Network and Regsitry ######"
 if docker login -u ${HARBOR_USER} -p ${HARBOR_PWD} ${HARBOR_DOMAIN}; then
   echo "login successful to" ${HARBOR_DOMAIN}  >&2
 else
@@ -191,7 +198,7 @@ fi
 
 
 #### adding secrets #####
-
+echo  "#### adding cred ####"
 tanzu secret registry add tap-registry \
   --username ${INSTALL_REGISTRY_USERNAME} --password ${INSTALL_REGISTRY_PASSWORD} \
   --server ${INSTALL_REGISTRY_HOSTNAME} \
@@ -211,29 +218,44 @@ kubectl create secret docker-registry registry-credentials --docker-server=${HAR
 kubectl create secret docker-registry harbor-registry --docker-server=${HARBOR_DOMAIN} --docker-username=${HARBOR_USER} --docker-password=${HARBOR_PWD} -n dev
 
 
-echo "your harbor cred"
-kubectl get secret registry-credentials --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
+#echo "your harbor cred"
+#kubectl get secret registry-credentials --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
 
 wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tap-values.yml 
+
 envsubst < tap-values.yml > tap-base-final.yml
 
-tanzu package repository add tanzu-tap-repository \
-  --url registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:$tap_version \
-  --namespace tap-install
 
-wait
-timeout 150s bash -c 'for((;;)); do :; done'
+echo "###### adding tap package #####"
+sleep 15
+
+#tanzu package repository add tanzu-tap-repository \
+#  --url registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:$tap_version \
+#  --namespace tap-install
+
+
+## offline 
+tanzu package repository add tanzu-tap-repository --url harbor.source-lab.io/tap/tap-packages:$tap_version --namespace tap-install
+
+echo "tap-repository added successfully"
+
+sleep 60
+
+read -p "would you like to install TAP GUI ? (enter: yes to continue)"
+if [ "$REPLY" != "yes" ]; then
+   exit
+fi
 
 ##################  TAP installation ##################
 #######################################################
 
 
-echo "starting installtion in 10 sec (Please be patient as it might take few min to complete)"
+echo "####  starting installtion in 10 sec (Please be patient as it might take few min to complete) ######"
 sleep 10
 
 tanzu package install tap -p tap.tanzu.vmware.com -v $tap_version --values-file tap-base-final.yml -n tap-install
 
-timeout 150s bash -c 'for((;;)); do :; done'
+sleep 30
 
 echo "installtion completed"
 
@@ -241,8 +263,6 @@ read -p "would you like to setup TAP GUI ? (enter: yes to continue)"
 if [ "$REPLY" != "yes" ]; then
    exit
 fi
-
-
 
 
 tap_domain=$(kubectl get svc -n tap-gui |awk 'NR=='2'{print $4}')
