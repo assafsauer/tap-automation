@@ -42,8 +42,8 @@ export infrastructure_provider=aws
 export LBType=nlb
 
  
- 
- ################## Download TAP packeges ##################
+  
+################## Download TAP packeges ##################
 ###########################################################
 
 ### login to pivotal network ###
@@ -136,7 +136,6 @@ mkdir tanzu
 tar -xvf tanzu-framework-linux-amd64.tar -C tanzu/
 cd tanzu
 export TANZU_CLI_NO_INIT=true
-
 #tanzu plugin delete imagepullsecret
 #tanzu config set features.global.context-aware-cli-for-plugins false
 
@@ -152,22 +151,17 @@ cd ..
 kubectl create ns tap-install
 
 kubectl delete deployment kapp-controller -n tkg-system
-
 kubectl apply -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.29.0/release.yml
 
 kubectl create ns secretgen-controller
-
 kubectl apply -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml
 
 #kapp deploy -y -a sg -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.6.0/release.yml
 
 
 
-################## RBAC ##################
-#############################################
-
+#### RBAC ####
 wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/serviceacount.yml
-
 kubectl apply -f serviceacount.yml -n $tap_namespace
 
 
@@ -222,7 +216,6 @@ kubectl create secret docker-registry harbor-registry --docker-server=${HARBOR_D
 #kubectl get secret registry-credentials --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
 
 wget -N https://raw.githubusercontent.com/assafsauer/tap-automation/master/templates/tap-values.yml 
-
 envsubst < tap-values.yml > tap-base-final.yml
 
 
@@ -241,11 +234,6 @@ echo "tap-repository added successfully"
 
 sleep 60
 
-read -p "would you like to install TAP GUI ? (enter: yes to continue)"
-if [ "$REPLY" != "yes" ]; then
-   exit
-fi
-
 ##################  TAP installation ##################
 #######################################################
 
@@ -263,6 +251,8 @@ read -p "would you like to setup TAP GUI ? (enter: yes to continue)"
 if [ "$REPLY" != "yes" ]; then
    exit
 fi
+
+
 
 
 tap_domain=$(kubectl get svc -n tap-gui |awk 'NR=='2'{print $4}')
