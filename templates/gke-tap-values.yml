@@ -15,12 +15,12 @@ ootb_supply_chain_basic:
     server: $HARBOR_DOMAIN
     repository: "tap/supply-chain"
  
- 
+
 contour:
   envoy:
     service:
       type: LoadBalancer
-
+      
 tap_gui:
   service_type: LoadBalancer
 
