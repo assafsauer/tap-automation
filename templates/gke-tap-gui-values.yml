@@ -22,12 +22,11 @@ tap_gui:
       locations:
         - type: url
           target: $catalog_info
-       
- contour:
+contour:
   envoy:
     service:
       type: LoadBalancer
-
+      
 cnrs:
   provider: local
   domain_name: apps.$domain
