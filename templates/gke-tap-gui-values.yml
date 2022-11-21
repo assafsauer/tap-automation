@@ -57,7 +57,9 @@ accelerator:
     service_type: "ClusterIP"
     
 excluded_packages:
-- policy.apps.tanzu.vmware.com
+  - policy.apps.tanzu.vmware.com
+  - learningcenter.tanzu.vmware.com
+  - workshops.learningcenter.tanzu.vmware.com
 
 # Temporay fix for 1.2
 package_overlays:
