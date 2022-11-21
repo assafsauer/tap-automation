@@ -22,7 +22,7 @@ contour:
       type: LoadBalancer
       
 tap_gui:
-  service_type: LoadBalancer
+  service_type: ClusterIP
 
 scanning:
   metadataStore:
