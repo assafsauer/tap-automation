@@ -6,8 +6,8 @@ shared:
 ceip_policy_disclosed: true
 buildservice:
   kp_default_repository: harbor.source-lab.io/build-service/tbs
-  kp_default_repository_username: tanzu
-  kp_default_repository_password: Tanzu@vmware1
+  kp_default_repository_username: $HARBOR_USER
+  kp_default_repository_password: $HARBOR_PWD
   enable_automatic_dependency_updates: true
   tanzunet_username: $INSTALL_REGISTRY_USERNAME
   tanzunet_password: $INSTALL_REGISTRY_PASSWORD
