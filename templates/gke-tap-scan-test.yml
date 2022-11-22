@@ -65,7 +65,3 @@ package_overlays:
 - name: tap-gui
   secrets:
   - name: k8s-reader-overlay
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
