@@ -309,4 +309,4 @@ echo "please add A Record to your domain with the" $ingress ip
 #tanzu apps workload create golang --git-repo https://github.com/assafsauer/go-webapp --git-branch master --type web-basic --label app.kubernetes.io/part-of=tanzu-app --label apps.tanzu.vmware.com/has-tests=true -n dev
 
 #tanzu apps workload create petclinic --git-repo https://github.com/assafsauer/spring-petclinic-accelerators --git-branch main --type web  --label app.kubernetes.io/part-of=tanzu-app --label apps.tanzu.vmware.com/has-tests=true -n dev
-root@ip-172-16-1-53:/home/ubuntu# 
+
