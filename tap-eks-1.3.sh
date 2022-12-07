@@ -269,7 +269,7 @@ tap_domain=$(kubectl get svc -n tap-gui |awk 'NR=='2'{print $4}')
 export tap_domain=$tap_domain
 
 ingress=$( kubectl get svc -A |grep tanzu-system-ingress |grep LoadBalancer | awk 'NR=='1'{print $5}')
-#ip=$(nslookup $ingress |grep Address |grep -v 127 | awk '{print $2}')
+ip=$(nslookup $ingress |grep Address |grep -v 127 | awk '{print $2}')
 
 echo "########## please update your DNS as follow: ###########"
 echo *app.$domain "pointing to" $ingress
