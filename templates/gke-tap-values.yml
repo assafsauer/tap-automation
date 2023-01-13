@@ -2,7 +2,11 @@ profile: full
 
 shared:
   ingress_domain: apps.$domain
-  
+  image_registry:
+    project_path: $HARBOR_DOMAIN/tap
+    username: $HARBOR_USER
+    password: $HARBOR_PWD
+    
 ceip_policy_disclosed: true
 buildservice:
   kp_default_repository: $HARBOR_DOMAIN/build-service/tbs
