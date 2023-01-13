@@ -9,20 +9,22 @@ shared:
     
 ceip_policy_disclosed: true
 buildservice:
-  kp_default_repository: $HARBOR_DOMAIN/tbs
+  kp_default_repository: $HARBOR_DOMAIN/build-service/tbs
   kp_default_repository_username: $HARBOR_USER
   kp_default_repository_password: $HARBOR_PWD
-  enable_automatic_dependency_updates: true
-  tanzunet_username: $INSTALL_REGISTRY_USERNAME
-  tanzunet_password: $INSTALL_REGISTRY_PASSWORD
-  descriptor_name: full
   
 supply_chain: basic
 ootb_supply_chain_basic:
   registry:
     server: $HARBOR_DOMAIN
     repository: "tap/supply-chain"
+ 
 
+contour:
+  envoy:
+    service:
+      type: LoadBalancer
+      
 tap_gui:
   service_type: ClusterIP # If the shared.ingress_domain is set as above, this must be set to ClusterIP.
   app_config:
@@ -30,24 +32,7 @@ tap_gui:
       locations:
         - type: url
           target: $catalog_info
-contour:
-  envoy:
-    service:
-      type: LoadBalancer
-      
-cnrs:
-  provider: local
-  domain_name: apps.$domain
-  # Fix domain template for TSL certficates
-  domain_template: "{{.Name}}-{{.Namespace}}.{{.Domain}}"
 
-metadata_store:
-  ns_for_export_app_cert: $tap_namespace
-  app_service_type: ClusterIP
-
-ootb_templates:
-     iaas_auth: true
-     
 scanning:
   metadataStore:
     url: "" # Disable embedded integration since it's deprecated
@@ -55,18 +40,27 @@ scanning:
 grype:
   namespace: "dev"
   targetImagePullSecret: "registry-credentials"
-  
-accelerator:
-  server:
-    service_type: "ClusterIP"
-    
+
+cnrs:
+  provider: local
+  domain_name: apps.source-lab.io
+  # Fix domain template for TSL certficates
+  domain_template: "{{.Name}}-{{.Namespace}}.{{.Domain}}"
+
+metadata_store:
+  ns_for_export_app_cert: dev
+  app_service_type: ClusterIP
+
+ootb_templates:
+     iaas_auth: true
+     
 excluded_packages:
-  - policy.apps.tanzu.vmware.com
-  - learningcenter.tanzu.vmware.com
-  - workshops.learningcenter.tanzu.vmware.com
+- policy.apps.tanzu.vmware.com
+
 
 # Temporay fix for 1.2
 package_overlays:
 - name: tap-gui
   secrets:
   - name: k8s-reader-overlay
+
