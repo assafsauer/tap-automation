@@ -2,10 +2,14 @@ profile: full
 
 shared:
   ingress_domain: apps.$domain
-  
+  image_registry:
+    project_path: $HARBOR_DOMAIN/tap
+    username: $HARBOR_USER
+    password: $HARBOR_PWD
+    
 ceip_policy_disclosed: true
 buildservice:
-  kp_default_repository: harbor.source-lab.io/build-service/tbs
+  kp_default_repository: $HARBOR_DOMAIN/tbs
   kp_default_repository_username: $HARBOR_USER
   kp_default_repository_password: $HARBOR_PWD
   enable_automatic_dependency_updates: true
