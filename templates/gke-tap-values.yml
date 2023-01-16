@@ -25,8 +25,16 @@ contour:
     service:
       type: LoadBalancer
       
+#tap_gui:
+#  service_type: ClusterIP
+  
 tap_gui:
-  service_type: ClusterIP
+  service_type: ClusterIP # If the shared.ingress_domain is set as above, this must be set to ClusterIP.
+  app_config:
+    catalog:
+      locations:
+        - type: url
+          target: $catalog_info
 
 scanning:
   metadataStore:
